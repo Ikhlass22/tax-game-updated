@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actual Game</title>
+    <style>
+        /* CSS styles for the page */
+        body {
+            font-family: 'Press Start 2P', cursive; /* Arcade-like font */
+            text-align: center;
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        #roundDisplay {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+
+        .tax-prompt {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .tax-buttons {
+            margin-top: 10px;
+        }
+
+        .tax-button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #ffcc00;
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .tax-button:hover {
+            background-color: #ffffff;
+            color: #ffcc00;
+        }
+
+        /* CSS styles for the game */
+        .coins-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Center vertically */
+            padding: 20px; /* Add padding for space */
+            box-sizing: border-box; /* Include padding in total width */
+        }
+
+        .coins-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .coin-img {
+            width: 150px; /* Adjust size */
+            height: auto;
+            margin: 0 20px; /* Adjust margin */
+            cursor: pointer;
+        }
+
+        #scoreDisplay {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> <!-- Importing arcade-like font -->
+</head>
+<body>
+<div id="roundDisplay">Round: 1</div>
+<div id="scoreDisplay">SCORE: 0</div>
+
+<!-- Game content -->
+<div class="coins-wrapper"> <!-- Changed class to "coins-wrapper" -->
+    <div class="coins-container"> <!-- Centering the coins -->
+        <img src="img/blue.png" class="coin-img coin blue-coin" data-color="blue" data-points="10" />
+        <img src="img/orange.png" class="coin-img coin orange-coin" data-color="orange" data-points="5" />
+        <img src="img/yellow.png" class="coin-img coin yellow-coin" data-color="yellow" data-points="2" />
+    </div>
+</div>
+
+<script>
+    // JavaScript code for the game
+    const coins = document.querySelectorAll('.coin');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    let score = 0;
+    let trials = 0;
+    let round = 1;
+    let clickedCoinRound1 = [];
+
+    coins.forEach((coin, index) => {
+        coin.addEventListener('click', () => {
+            const points = parseInt(coin.dataset.points);
+            score += points;
+            scoreDisplay.textContent = `SCORE: ${score}`;
+            simulateTrial(coin); // Call simulateTrial after each click
+            clickedCoinRound1.push(coin.dataset.color); // Store clicked coin color for round 1
+        });
+    });
+
+    // Function to simulate a game trial
+    function simulateTrial(clickedCoin) {
+        // Increment trial count
+        trials++;
+        // If the current round has reached 10 trials, show the tax prompt
+        if (trials === 10) {
+            showTaxPrompt(clickedCoin); // Pass the last clicked coin to the tax prompt function
+        }
+    }
+
+    // Function to display tax payment prompt
+    function showTaxPrompt(clickedCoin) {
+        // Redirect to the page showing the score and tax prompt after a slight delay
+        setTimeout(() => {
+            localStorage.setItem('clicked_coin_round_1', JSON.stringify(clickedCoinRound1)); // Store clicked coin data for round 1
+            const lastCoinColor = clickedCoin.dataset.color;
+            window.location.href = `score_and_tax_prompt.html?score=${score}&lastCoin=${lastCoinColor}`;
+        }, 100); // Delay in milliseconds
+    }
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

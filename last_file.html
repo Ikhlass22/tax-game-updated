@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Final Page</title>
+    <style>
+        /* Center the content vertically and horizontally */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Style for the welcome text */
+        #endText {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: black; /* Black color */
+            font-family: 'Press Start 2P', cursive; /* Arcade-style font */
+        }
+
+        /* Style for the score number */
+        #score {
+            color: #ffcc00; /* Orange color */
+        }
+    </style>
+    <!-- Link to Google Fonts for the arcade-style font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- Your HTML content -->
+<div id="endText">
+    <div>The End. <br>
+        <br>
+        <div>Congratulations, your total score is:</div>
+        <br>
+        <div id="score">NaN</div>
+        <br>
+        <div>Please call the experimenter present in the room to show them your final score, and get your money!</div>
+        <br>
+        <div>Thank you for playing THE GAME!</div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const score = parseFloat(urlParams.get('score')).toFixed(2);
+    document.getElementById('score').textContent = score;
+
+    // Function to retrieve data from localStorage
+    function retrieveDataFromLocalStorage(key) {
+        return JSON.parse(localStorage.getItem(key)) || [];
+    }
+
+    const participantData = retrieveDataFromLocalStorage('participant_data');
+    const clickedCoinsPractice = retrieveDataFromLocalStorage('practice_clicked_coins');
+    const clickedCoinRound1 = retrieveDataFromLocalStorage('clicked_coin_round_1');
+    const clickedCoinRound2 = retrieveDataFromLocalStorage('clicked_coin_colors_round_2');
+    const clickedCoinRound3 = retrieveDataFromLocalStorage('clicked_coins_colors_round3');
+    const clickedCoinRound4 = retrieveDataFromLocalStorage('clicked_coins_colors_round4');
+    const clickedCoinRound5 = retrieveDataFromLocalStorage('clicked_coins_colors_round5');
+    const totalScore = localStorage.getItem('total_score') || 'N/A';
+    const totalScore2 = localStorage.getItem('total_score_round2') || 'N/A';
+    const totalScore3 = localStorage.getItem('total_score_round3') || 'N/A';
+    const totalScore4 = localStorage.getItem('total_score_round4') || 'N/A';
+    const totalScore5 = localStorage.getItem('final_score') || 'N/A';
+    const taxPaid = localStorage.getItem('tax_paid') || 'N/A';
+    const taxPaid2 = localStorage.getItem('tax_paid_round2') || 'N/A';
+    const taxPaid3 = localStorage.getItem('tax_paid_round3') || 'N/A';
+    const taxPaid4 = localStorage.getItem('tax_paid_round4') || 'N/A';
+    const updatedScore = localStorage.getItem('updated_score') || 'N/A';
+    const updatedScore2 = localStorage.getItem('updated_score1') || 'N/A';
+    const updatedScore3 = localStorage.getItem('updated_score2') || 'N/A';
+    const updatedScore4 = localStorage.getItem('updated_score3') || 'N/A';
+    const startTimeMillis = JSON.parse(localStorage.getItem('experiment_data')).start_time || 'N/A'; // Retrieve the start time in milliseconds
+    const startTime = new Date(parseInt(startTimeMillis)).toLocaleString(); // Convert milliseconds to a human-readable format
+    const endTime = localStorage.getItem('end_time') || 'N/A'; // Retrieve the ending time
+
+    // Function to convert participant data to CSV format
+    function convertToCSV(data) {
+        const csvRows = [];
+        const headers = ['Start Time', 'End Time', 'Consent', 'Clicked Coin Practice', 'Clicked Coin Round 1', 'Total Score', 'Tax Paid', 'Updated Score', 'Clicked Coin Round 2', 'Total Score Round 2', 'Tax Paid Round 2', 'Updated Score Round 2', 'Clicked Coin Round 3', 'Total Score Round 3', 'Tax Paid Round 3', 'Updated Score Round 3', 'Clicked Coin Round 4', 'Total Score Round 4', 'Tax Paid Round 4', 'Updated Score Round 4', 'Clicked Coin Round 5', 'Final Score'];
+        csvRows.push(headers.join(','));
+
+        // Iterate through participant data and push to CSV rows
+        for (let i = 0; i < data.length; i++) {
+            const entry = data[i];
+            const values = [startTime, endTime, entry.consent || 'N/A', clickedCoinsPractice[i] || 'N/A', clickedCoinRound1[i] || 'N/A', totalScore, taxPaid, updatedScore, clickedCoinRound2[i] || 'N/A', totalScore2, taxPaid2, updatedScore2, clickedCoinRound3[i] || 'N/A', totalScore3, taxPaid3, updatedScore3, clickedCoinRound4[i] || 'N/A', totalScore4, taxPaid4, updatedScore4, clickedCoinRound5[i] || 'N/A', totalScore5];
+            csvRows.push(values.join(','));
+        }
+
+        return csvRows.join('\n');
+    }
+
+
+    // Function to download the CSV file
+    function downloadCSV() {
+        const csvData = convertToCSV(participantData);
+        const blob = new Blob([csvData], {type: 'text/csv'});
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'experiment_data.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Call downloadCSV function to prompt download
+    downloadCSV();
+</script>
+</body>
+</html>
